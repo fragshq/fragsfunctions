@@ -3,7 +3,7 @@ module github.com/theirish81/fragsfunctions/data
 go 1.25.4
 
 require (
-	github.com/theirish81/frags v0.28.0
+	github.com/theirish81/frags v0.30.0-rc5
 	github.com/theirish81/fragsfunctions v0.6.0
 	github.com/theirish81/zealql v0.0.0-20260513085909-eb2e76a09b48
 )
@@ -35,7 +35,7 @@ require (
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
 	github.com/theirish81/doauth v0.0.0-20260427082048-18b593885cb7 // indirect
-	github.com/theirish81/sesat2 v0.0.0-20260429064941-d6239cdda3a0 // indirect
+	github.com/theirish81/sesat2 v0.0.0-20260511100810-8e377902d6c0 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	golang.org/x/crypto v0.49.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
