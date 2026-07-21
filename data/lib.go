@@ -11,7 +11,11 @@ import (
 	"github.com/theirish81/zealql"
 )
 
-func New(db *zealql.Database) frags.ToolsCollection {
+type RunnerContainer struct {
+	frags.ExportableRunner
+}
+
+func New(db *zealql.Database, sm frags.SessionManager, runnerContainer *RunnerContainer) frags.ToolsCollection {
 	collection := fragsfunctions.NewBasicCollection("data", "data manipulation functions")
 	collection.AddFunction(frags.ExternalFunction{
 		Name:        "internal_db_list_tables",
@@ -150,7 +154,119 @@ object "args". Do not inline the arguments in the code`,
 			if err != nil {
 				return nil, err
 			}
-			return engine.RunCode(ctx, *code, data["args"], nil)
+			return engine.RunCode(ctx, *code, data["args"], runnerContainer)
+		},
+	})
+	collection.AddFunction(frags.ExternalFunction{
+		Name:        "javascript_run_script",
+		Description: "execute a JavaScript script from the provided collection. The collection:\n " + sm.Components.Scripts.ListByType(frags.Code).Describe(),
+		Schema: &schema.Schema{
+			Type:     schema.Object,
+			Required: []string{"script_name", "args"},
+			Example: map[string]any{
+				"script_name": "fibonacci",
+				"args":        map[string]any{"val": 55},
+			},
+			Properties: map[string]*schema.Schema{
+				"script_name": {
+					Type:        schema.String,
+					Description: "the name JavaScript script to run",
+					Example:     "fibonacci",
+				},
+				"args": {
+					Type: schema.Object,
+					Description: `the arguments to pass to the script. They will be exposed to the engine as the
+object "args". Do not inline the arguments in the code`,
+				},
+			},
+		},
+		Func: func(ctx *util.FragsContext, data map[string]any) (any, error) {
+			engine := scriptengines.NewJavascriptScriptingEngine()
+			scriptName, err := fragsfunctions.GetArg[string](data, "script_name")
+			if err != nil {
+				return nil, err
+			}
+
+			if script, ok := runnerContainer.Components().Scripts.Find(*scriptName, frags.Code); ok {
+				return engine.RunCode(ctx, script.Script, data["args"], runnerContainer)
+			}
+			return nil, errors.New("script not found")
+		},
+	})
+	collection.AddFunction(frags.ExternalFunction{
+		Name:        "prolog_execute",
+		Description: "receives a prolog knowledge base and executes a query against it",
+		Schema: &schema.Schema{
+			Type:     schema.Object,
+			Required: []string{"code", "query"},
+			Example: map[string]any{
+				"code":  "% Facts: parent(Parent, Child)\\r\\nparent(albert, bob).\\r\\nparent(albert, betsy).\\r\\nparent(betsy, charlie).\\r\\n\\r\\n% Rule: X is a grandparent of Y if X is a parent of Z, and Z is a parent of Y.\\r\\ngrandparent(X, Y) :- parent(X, Z), parent(Z, Y).",
+				"query": "grandparent(CHARLIES_GRANDPARENT, charlie).",
+			},
+			Properties: map[string]*schema.Schema{
+				"code": {
+					Type:        schema.String,
+					Description: "the prolog code",
+					Example:     "% Facts: parent(Parent, Child)\\r\\nparent(albert, bob).\\r\\nparent(albert, betsy).\\r\\nparent(betsy, charlie).\\r\\n\\r\\n% Rule: X is a grandparent of Y if X is a parent of Z, and Z is a parent of Y.\\r\\ngrandparent(X, Y) :- parent(X, Z), parent(Z, Y).",
+				},
+				"query": {
+					Type:        schema.String,
+					Description: "the prolog query",
+					Example:     "grandparent(CHARLIES_GRANDPARENT, charlie).",
+				},
+			},
+		},
+		Func: func(ctx *util.FragsContext, data map[string]any) (any, error) {
+			code, err := fragsfunctions.GetArg[string](data, "code")
+			if err != nil {
+				return nil, err
+			}
+			query, err := fragsfunctions.GetArg[string](data, "query")
+			if err != nil {
+				return nil, err
+			}
+			eng := scriptengines.NewPrologEngine()
+			return eng.Run(ctx, *code, *query, runnerContainer)
+		},
+	})
+
+	collection.AddFunction(frags.ExternalFunction{
+		Name:        "prolog_run_script",
+		Description: "runs a prolog script from the given collection and runs the query against it. The collection:\n" + sm.Components.Scripts.ListByType(frags.Kbs).Describe(),
+		Schema: &schema.Schema{
+			Type:     schema.Object,
+			Required: []string{"script_name", "query"},
+			Example: map[string]any{
+				"script_name": "relatives",
+				"query":       "grandparent(CHARLIES_GRANDPARENT, charlie).",
+			},
+			Properties: map[string]*schema.Schema{
+				"script_name": {
+					Type:        schema.String,
+					Description: "the name of the script to run",
+					Example:     "relatives",
+				},
+				"query": {
+					Type:        schema.String,
+					Description: "the prolog query",
+					Example:     "grandparent(CHARLIES_GRANDPARENT, charlie).",
+				},
+			},
+		},
+		Func: func(ctx *util.FragsContext, data map[string]any) (any, error) {
+			scriptName, err := fragsfunctions.GetArg[string](data, "script_name")
+			if err != nil {
+				return nil, err
+			}
+			query, err := fragsfunctions.GetArg[string](data, "query")
+			if err != nil {
+				return nil, err
+			}
+			eng := scriptengines.NewPrologEngine()
+			if script, ok := runnerContainer.Components().Scripts.Find(*scriptName, frags.Kbs); ok {
+				return eng.Run(ctx, script.Script, *query, runnerContainer)
+			}
+			return nil, errors.New("script not found")
 		},
 	})
 	return &collection
