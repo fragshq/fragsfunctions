@@ -157,6 +157,11 @@ object "args". Do not inline the arguments in the code`,
 			return engine.RunCode(ctx, *code, data["args"], runnerContainer)
 		},
 	})
+	description := "Runs a JavaScript script from a given collection and runs the query against it."
+	scripts := sm.Components.Scripts.ListByType(frags.Kbs)
+	if len(scripts) > 0 {
+		description += " The collection: " + scripts.Describe()
+	}
 	collection.AddFunction(frags.ExternalFunction{
 		Name:        "javascript_run_script",
 		Description: "execute a JavaScript script from the provided collection. The collection:\n " + sm.Components.Scripts.ListByType(frags.Code).Describe(),
@@ -229,10 +234,14 @@ object "args". Do not inline the arguments in the code`,
 			return eng.Run(ctx, *code, *query, runnerContainer)
 		},
 	})
-
+	description = "Runs a prolog script from a given collection and runs the query against it."
+	scripts = sm.Components.Scripts.ListByType(frags.Kbs)
+	if len(scripts) > 0 {
+		description += " The collection: " + scripts.Describe()
+	}
 	collection.AddFunction(frags.ExternalFunction{
 		Name:        "prolog_run_script",
-		Description: "runs a prolog script from the given collection and runs the query against it. The collection:\n" + sm.Components.Scripts.ListByType(frags.Kbs).Describe(),
+		Description: description,
 		Schema: &schema.Schema{
 			Type:     schema.Object,
 			Required: []string{"script_name", "query"},

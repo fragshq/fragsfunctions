@@ -34,7 +34,7 @@ require (
 	github.com/samber/lo v1.53.0 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
-	github.com/theirish81/doauth v0.0.0-20260427082048-18b593885cb7 // indirect
+	github.com/theirish81/doauth v0.0.0-20260728113914-6d4bef51ad6e // indirect
 	github.com/theirish81/sesat2 v0.0.0-20260511100810-8e377902d6c0 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
