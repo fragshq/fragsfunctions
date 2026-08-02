@@ -17,8 +17,8 @@ type FD struct {
 type Collection struct {
 }
 
-func New() frags.ToolsCollection {
-	collection := fragsfunctions.NewBasicCollection("fs", "file system functions")
+func New(instanceName string) frags.ToolsCollection {
+	collection := fragsfunctions.NewBasicCollection(instanceName, "file system functions")
 
 	collection.AddFunction(frags.ExternalFunction{
 		Name:        "fs_ls",
