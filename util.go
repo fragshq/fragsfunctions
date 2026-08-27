@@ -3,7 +3,7 @@ package fragsfunctions
 import (
 	"errors"
 
-	"github.com/theirish81/frags"
+	"github.com/fragshq/frags"
 )
 
 func GetArg[T any](args map[string]any, key string) (*T, error) {
