@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/fragshq/frags"
+	"github.com/fragshq/frags/schema"
+	"github.com/fragshq/frags/util"
+	"github.com/fragshq/fragsfunctions"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/theirish81/frags"
-	"github.com/theirish81/frags/schema"
-	"github.com/theirish81/frags/util"
-	"github.com/theirish81/fragsfunctions"
 )
 
 type DbCollection struct {

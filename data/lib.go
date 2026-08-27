@@ -3,12 +3,12 @@ package data
 import (
 	"errors"
 
-	"github.com/theirish81/frags"
-	"github.com/theirish81/frags/schema"
-	"github.com/theirish81/frags/scriptengines"
-	"github.com/theirish81/frags/util"
-	"github.com/theirish81/fragsfunctions"
-	"github.com/theirish81/zealql"
+	"github.com/fragshq/frags"
+	"github.com/fragshq/frags/schema"
+	"github.com/fragshq/frags/scriptengines"
+	"github.com/fragshq/frags/util"
+	"github.com/fragshq/fragsfunctions"
+	"github.com/fragshq/zealql"
 )
 
 func New(db *zealql.Database) frags.ToolsCollection {
