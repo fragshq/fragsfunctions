@@ -1,6 +1,6 @@
 module github.com/fragshq/fragsfunctions/http
 
-go 1.25.4
+go 1.26.0
 
 require (
 	github.com/fragshq/frags v1.0.0-rc6
