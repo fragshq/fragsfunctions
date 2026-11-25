@@ -13,20 +13,13 @@ import (
 	"github.com/fragshq/fragsfunctions"
 )
 
-func composeFunctionName(instanceName string, functionName string) string {
-	if instanceName == "http" {
-		return functionName
-	}
-	return instanceName + "_" + functionName
-}
-
 type PreProcessRequestFunc func(req *http.Request) error
 
 func New(instanceName string, ppr PreProcessRequestFunc, client *http.Client) frags.ToolsCollection {
 	collection := fragsfunctions.NewBasicCollection(instanceName, "http client functions")
 
 	collection.AddFunction(frags.ExternalFunction{
-		Name:        composeFunctionName(instanceName, "http_fetch"),
+		Name:        "http_fetch",
 		Description: "executes an HTTP request and returns the response body",
 		Schema: &schema.Schema{
 			Type:     schema.Object,
