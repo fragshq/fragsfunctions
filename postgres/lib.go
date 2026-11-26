@@ -25,13 +25,6 @@ type ColumnSchema struct {
 	DataType   string `json:"data_type"`
 }
 
-func composeFunctionName(instanceName string, functionName string) string {
-	if instanceName == "postgres" {
-		return functionName
-	}
-	return instanceName + "_" + functionName
-}
-
 func New(ctx context.Context, instanceName string, connString string) (frags.ToolsCollection, error) {
 
 	collection := DbCollection{
@@ -45,7 +38,7 @@ func New(ctx context.Context, instanceName string, connString string) (frags.Too
 	collection.conn = conn
 
 	collection.AddFunction(frags.ExternalFunction{
-		Name:        composeFunctionName(instanceName, "postgres_query"),
+		Name:        "postgres_query",
 		Description: "executes a SELECT query against a PostgreSQL database. Do not use to alter the database record or structure.",
 		Schema: &schema.Schema{
 			Type:     schema.Object,
@@ -93,7 +86,7 @@ func New(ctx context.Context, instanceName string, connString string) (frags.Too
 		},
 	})
 	collection.AddFunction(frags.ExternalFunction{
-		Name:        composeFunctionName(instanceName, "postgres_statement"),
+		Name:        "postgres_statement",
 		Description: "executes an UPDATE or INSERT statement against a PostgreSQL database table",
 		Schema: &schema.Schema{
 			Type:     schema.Object,
@@ -116,7 +109,7 @@ func New(ctx context.Context, instanceName string, connString string) (frags.Too
 	})
 
 	collection.AddFunction(frags.ExternalFunction{
-		Name:        composeFunctionName(instanceName, "postgres_table_schema"),
+		Name:        "postgres_table_schema",
 		Description: "returns the schema of a PostgreSQL table",
 		Schema: &schema.Schema{
 			Type:     schema.Object,
